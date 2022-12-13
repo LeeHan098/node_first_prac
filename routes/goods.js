@@ -36,7 +36,7 @@ const goods = [
     price: 6.2,
   },
 ];
-
+//전체 상품 조회
 router.get("/goods",(req,res) =>{
   res.json({goods})
 })
@@ -47,7 +47,35 @@ router.get("/goods/:goodsId", (req,res) =>{
 
   res.status(200).json({detail})
 })
+//장바구니 생성
+const Cart = require("../schemas/cart.js")
+router.post("/goods/:goodsId/cart",async(req,res) => {
+  const {goodsId} = req.params
+  const {quantity} = req.body
 
+  const existCarts = await Cart.find({goodsId})
+  if (existCarts.length){
+    return res.status(400).json({success:false,errorMessage:"이미 장바구니에 해당 상품이 존재합니다."})
+  }
+  await Cart.create({goodsId,quantity})
+
+  res.json({result: "success"})
+})
+//장바구니 수정
+router.put("/goods/:goodsId/cart", async(req,res) => {
+  const {goodsId} = req.params
+  const {quantity} = req.body
+  //수정에 하기 위해 $set : {바꾸고 싶은 위치 key : 바꾸고 싶은 값}
+  const existCarts = await Cart.find({goodsId})
+  if(existCarts.length){
+    await Cart.updateOne(
+      {goodsId: goodsId},
+      {$set: {quantity:quantity}}
+      )
+  }
+  res.status(200).json({success:true})
+})
+//상품 추가 post 요청 라우터
 const Goods = require("../schemas/goods.js")
 router.post("/goods/",async(req,res) => {
   const {goodsId, name, thumbnailUrl, category, price} = req.body
@@ -58,6 +86,15 @@ router.post("/goods/",async(req,res) => {
   }
   const createdgoods = await Goods.create({goodsId,name,thumbnailUrl,category,price})
   res.json({goods : createdgoods})
+})
+//장바구니 삭제
+router.delete("/goods/:goodsId/cart", async(req,res) => {
+  const {goodsId} = req.params
+  const existCarts = await Cart.find({goodsId})
+  if(existCarts.length){
+    await Cart.deleteOne({goodsId})
+  }
+  res.json({result:"success"})
 })
 module.exports = router
 

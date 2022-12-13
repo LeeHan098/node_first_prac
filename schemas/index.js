@@ -5,7 +5,7 @@ const mongoose = require("mongoose")
 const connect = () => {
   mongoose
     //몽고디비:로컬주소/데이터베이스이름
-    .connect("mongodb://localhost:27017/sparta_db")
+    .connect("mongodb://localhost:27017/node-prac")
     //만약 에러가 발생을 한다면 -> 에러값을 err에 받아서 console.log로 출력
     .catch(err => console.log(err))
 }

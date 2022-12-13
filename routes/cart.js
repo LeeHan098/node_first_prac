@@ -4,7 +4,7 @@ const router = express.Router()
 const Cart = require('../schemas/cart.js')
 const Goods = require('../schemas/goods.js')
 
-// localhost:3000/api/carts Get Method
+// localhost:3000/api/carts Get Method - carts 를 전부 조회하는 
 router.get('/carts', async(req,res)=>{
   const carts = await Cart.find({})
   // [{goodsId, quantitiy}] -> goodsId에 해당하는 상품을 가져와야함
